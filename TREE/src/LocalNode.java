@@ -1,13 +1,14 @@
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 class LocalNode implements Node {
     public DatagramSocket socket;
     public Node parentNode;
-    public Set<Node> children = new HashSet<Node>();
+    public ArrayList<Node> children = new ArrayList<>();
 
     public LocalNode(DatagramSocket socket, Node parentNode) {
         this.socket = socket;

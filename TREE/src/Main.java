@@ -32,19 +32,31 @@ public class Main {
                 public void run() {
                     try {
                         run = false;
-                        socketListener.join();
-                        userListener.join();
-                        if (node.parentNode != null)
+//                        socketListener.join();
+//                        userListener.join();
+                        if (node.parentNode != null) {
                             node.parentNode.removeChild(node);
-                        for (Node child : node.children) {
-                            child.removeParent();
-                            child.addParent(node.parentNode);
+                            for (Node child : node.children) {
+                                child.removeParent();
+                                child.addParent(node.parentNode);
+                            }
+                        } else {
+                            for (Node child : node.children) {
+                                child.removeParent();
+                            }
+                            if (node.children.size() > 1) {
+                                Node newParent = node.children.get(0);
+                                System.out.println(newParent.getAddress() + " " + newParent.getPort());
+                                for (int i = 1; i < node.children.size(); ++i) {
+                                    node.children.get(i).addParent(newParent);
+                                }
+                            }
                         }
                         socket.close();
                     } catch (IOException e) {
                         e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
                     }
                 }
             });
