@@ -16,15 +16,12 @@ class UserListener implements Runnable {
         if (console == null) {
             System.err.println("no console");
         }
-        while (Main.run) {
+        while (!Thread.currentThread().isInterrupted()) {
             String message;
             try {
-                Thread.sleep(100);
                 message = console.readLine();
                 node.sendMessage(message);
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }

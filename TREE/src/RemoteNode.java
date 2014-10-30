@@ -2,14 +2,15 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 
-class RemoteNode implements Node{
+class RemoteNode implements Node {
     private InetAddress address;
     private int port;
     private DatagramSocket socket;
     static int TIMEOUT = 100;
 
-    public RemoteNode (InetAddress address, int port, DatagramSocket socket) throws IOException {
+    public RemoteNode(InetAddress address, int port, DatagramSocket socket) throws IOException {
         this.address = address;
         if (!address.isReachable(TIMEOUT)) {
             throw new IOException("wrong net address " + address);
@@ -19,14 +20,14 @@ class RemoteNode implements Node{
     }
 
     @Override
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
         if (o.getClass() != LocalNode.class && o.getClass() != RemoteNode.class) {
             return false;
         }
-        Node node = (Node)o;
+        Node node = (Node) o;
         return (node.getAddress().equals(address) && node.getPort() == port);
     }
 
@@ -73,5 +74,27 @@ class RemoteNode implements Node{
         byte sendData[] = (Node.message + " " + message).getBytes();
         DatagramPacket packet = new DatagramPacket(sendData, 0, sendData.length, address, port);
         socket.send(packet);
+    }
+
+    @Override
+    public boolean check() {
+        try {
+            DatagramSocket socket = new DatagramSocket();
+            byte sendData[] = (Node.check).getBytes();
+            DatagramPacket packet = new DatagramPacket(sendData, 0, sendData.length, address, port);
+            socket.send(packet);
+
+            byte[] receiveData = new byte[1024];
+            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+            socket.setSoTimeout(100);
+            socket.receive(receivePacket);
+            String received = new String(receiveData);
+            if (!received.trim().equals(Node.answer)) {
+                return false;
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
     }
 }

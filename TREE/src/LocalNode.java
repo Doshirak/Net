@@ -29,8 +29,10 @@ class LocalNode implements Node {
     @Override
     public void addParent(Node node) throws IOException {
         parentNode = node;
-        parentNode.addChild(this);
-        System.out.println("add parent: " + node.getAddress() + " " + node.getPort());
+        if (parentNode.check()) {
+            parentNode.addChild(this);
+            System.out.println("add parent: " + node.getAddress() + " " + node.getPort());
+        }
     }
 
     @Override
@@ -63,5 +65,10 @@ class LocalNode implements Node {
         for (Node node : children) {
             node.sendMessage(message);
         }
+    }
+
+    @Override
+    public boolean check() {
+        return true;
     }
 }

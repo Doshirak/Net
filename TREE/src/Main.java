@@ -5,7 +5,6 @@ import java.net.*;
 
 public class Main {
     static String hr = "---------------------";
-    static boolean run = true;
 
     public static void main(String args[]) {
         try {
@@ -31,9 +30,8 @@ public class Main {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 public void run() {
                     try {
-                        run = false;
-//                        socketListener.join();
-//                        userListener.join();
+                        socketListener.interrupt();
+                        userListener.interrupt();
                         if (node.parentNode != null) {
                             node.parentNode.removeChild(node);
                             for (Node child : node.children) {
@@ -54,16 +52,11 @@ public class Main {
                         }
                         socket.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
                     }
                 }
             });
-
             socketListener.start();
             userListener.start();
-
             socketListener.join();
             userListener.join();
         } catch (SocketException e) {
